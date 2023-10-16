@@ -44,13 +44,14 @@ class Node:
             return self.get_f() < other.get_f()
 
 
-    #Calculate distance from pos1 to pos2 with the manhattan-method
+# Calculate distance from pos1 to pos2 with the manhattan-method
 def manhattan_method(pos1, pos2):
     return abs(pos1[0]-pos2[0])+abs(pos1[1]-pos2[1])
 
-def find_path(finsih_node, start_node):
+# Trace and record optimal path after it is found
+def find_path(finish_node, start_node):
     arr = []
-    node = finsih_node
+    node = finish_node
     while node != start_node:
         arr.append(node.position)
         node = node.parent
@@ -74,17 +75,18 @@ def __main__():
     while(True):
         # Select the node with the lowest cost from open, and move it to closed
         current = hq.heappop(open)
+        # Add current node to visited nodes
         closed.append(current)
 
         
-        # Break if we hace reached the finish
+        # Break if we have reached the goal
         if current.position == task.get_goal_pos():
             break
 
         # Get neighbouring positions
-        neighbour = current.get_neighbours_pos()
+        neighbours = current.get_neighbours_pos()
         
-        for n in neighbour:
+        for n in neighbours:
             # Check distance of neighbor to goal
             h = manhattan_method(n, task.get_goal_pos())
             # Create a new node
@@ -92,12 +94,12 @@ def __main__():
             # Don't do anything with the node if it's a wall or has been visited before
             if task.get_cell_value(n) == -1 or new_node in closed:
                 continue
-            
+            # If it's the first time we're discovering this node
             if new_node not in open:
-                # Add to heap if not done before
+                # Add to heap 
                 hq.heappush(open, new_node)
+            # Update the neighbor node if necessary
             else:
-                # Find the already existing node
                 for open_node in open:
                     if(open_node == new_node):
                         # Update g-value of neighbor if lower through current node
